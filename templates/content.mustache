@@ -1,0 +1,263 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_academic_dashboard_esse3/content
+
+    Template for the student transcript block content.
+    Renders cards for each course in the student's study plan.
+
+    Classes required for JS: none
+    Data attributes required for JS: none
+    Context variables required for this template:
+        * hascourses - boolean whether there are courses to display
+        * courses - array of course objects
+        * blockid - unique identifier for the block instance
+        * accentcolor - the accent color for the block
+
+    Example context (json):
+    {
+        "hascourses": true,
+        "blockid": "1",
+        "accentcolor": "#0056b3",
+        "courses": [
+            {
+                "adDes": "Mathematics I",
+                "cdsDes": "Computer Engineering",
+                "passed": true,
+                "grade": "30",
+                "weight": "12"
+            }
+        ]
+    }
+}}
+
+<div class="block-esse3-transcript-container" id="transcript-block-{{blockid}}" style="--transcript-primary: {{{accentcolor}}}; --transcript-on-primary: {{{accenttextcolor}}};">
+    {{^hascourses}}
+    <div class="alert alert-info">
+        {{#str}} nocourses, block_academic_dashboard_esse3 {{/str}}
+    </div>
+    {{/hascourses}}
+
+    {{#hascourses}}
+    <!-- Controls: Search and Filters -->
+    <div class="transcript-controls">
+        <div class="row align-items-center justify-content-between">
+            <!-- Search -->
+            <div class="col-md-5">
+                <div class="input-group shadow-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0"><i class="fa fa-search text-muted"></i></span>
+                    </div>
+                    <input type="text" class="form-control transcript-search border-left-0" placeholder="{{#str}} search, block_academic_dashboard_esse3 {{/str}}">
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="col-md-7 d-flex align-items-center justify-content-between">
+                <select class="form-control transcript-filter-year mr-2 w-auto shadow-sm">
+                    <option value="">{{#str}} all_years, block_academic_dashboard_esse3 {{/str}}</option>
+                    {{#years}}
+                    <option value="{{value}}">{{value}}</option>
+                    {{/years}}
+                </select>
+
+                <select class="form-control transcript-filter-status mr-3 w-auto shadow-sm">
+                    <option value="">{{#str}} all_statuses, block_academic_dashboard_esse3 {{/str}}</option>
+                    {{#statuses}}
+                    <option value="{{value}}">{{value}}</option>
+                    {{/statuses}}
+                </select>
+
+                <div class="btn-group shadow-sm" role="group">
+                    <button type="button" class="btn btn-outline-secondary transcript-view-toggle active" data-view="grid" title="{{#str}} grid_view, block_academic_dashboard_esse3 {{/str}}">
+                        <i class="fa fa-th-large"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary transcript-view-toggle" data-view="list" title="{{#str}} list_view, block_academic_dashboard_esse3 {{/str}}">
+                        <i class="fa fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{#hasoriginfilters}}
+        <div class="transcript-source-tabs mt-3" data-origin-tabs>
+            <div class="nav nav-pills transcript-subcategory-nav" role="tablist" aria-label="{{#str}} filter_by, block_academic_dashboard_esse3 {{/str}}">
+                <a href="#"
+                   class="nav-link transcript-subcategory-tablink transcript-origin-tablink active"
+                   data-origin-filter="transcript"
+                   role="tab"
+                   aria-selected="true">
+                    <span class="transcript-subcategory-title font-weight-bold mb-0">
+                        {{#str}} in_transcript, block_academic_dashboard_esse3 {{/str}} ({{transcriptcoursecount}})
+                    </span>
+                </a>
+                <a href="#"
+                   class="nav-link transcript-subcategory-tablink transcript-origin-tablink"
+                   data-origin-filter="enrolledextra"
+                   role="tab"
+                   aria-selected="false">
+                    <span class="transcript-subcategory-title font-weight-bold mb-0">
+                        {{#str}} enrolled_not_in_transcript, block_academic_dashboard_esse3 {{/str}} ({{extracoursecount}})
+                    </span>
+                </a>
+            </div>
+        </div>
+        {{/hasoriginfilters}}
+    </div>
+
+    <!-- Transcript Items -->
+    <div class="transcript-items-container transcript-grid-container">
+        {{#courses}}
+        <div class="transcript-item"
+             data-search="{{adDes}} {{adCod}} {{teacher}} {{cdsDes}}"
+             data-year="{{courseYear}}"
+             data-status="{{statusDes}}"
+             data-origin="{{sourcekey}}">
+
+            <div class="card h-100 border-0 shadow-sm">
+            <span class="transcript-card"></span>
+                <div class="card-body d-flex flex-column p-4">
+                    <!-- Card Head -->
+                    <div class="transcript-card-head mb-2">
+                        {{^issourceenrolledextra}}
+                        <div class="transcript-cds-name text-uppercase text-muted font-weight-bold" title="{{cdsDes}}">
+                            {{cdsDes}}
+                        </div>
+                        {{/issourceenrolledextra}}
+                        {{#issourceenrolledextra}}
+                        <div class="transcript-card-status-row">
+                            <span class="badge transcript-source-badge">{{#str}} enrolled_not_in_transcript_short, block_academic_dashboard_esse3 {{/str}}</span>
+                        </div>
+                        {{/issourceenrolledextra}}
+                    </div>
+
+                    <!-- Title -->
+                    <h5 class="transcript-course-title font-weight-bold mb-2" title="{{adDes}}">
+                        {{adDes}}
+                    </h5>
+
+                    <!-- Card Footer: Teacher + Actions (pinned to bottom) -->
+                    <div class="mt-auto">
+                        <!-- Teacher -->
+                        {{#teacher}}
+                        <div class="transcript-teacher-name text-muted d-flex align-items-center mb-3 small" title="{{#str}} teacher, block_academic_dashboard_esse3 {{/str}}: {{teacher}}">
+                            <i class="fa fa-user-o mr-2"></i>
+                            <span class="transcript-teacher-text">{{teacher}}</span>
+                        </div>
+                        {{/teacher}}
+                        {{^teacher}}
+                        <div class="transcript-teacher-name transcript-teacher-placeholder d-flex align-items-center mb-3 small" aria-hidden="true">
+                            <i class="fa fa-user-o mr-2"></i>
+                            <span class="transcript-teacher-text">&nbsp;</span>
+                        </div>
+                        {{/teacher}}
+                        {{#issourceenrolledextra}}
+                        {{#hasfullcategorytags}}
+                        <div class="transcript-course-context mb-3">
+                            <div class="transcript-course-tags transcript-course-tags-secondary">
+                                {{#fullcategorytags}}
+                                <span class="transcript-course-tag transcript-course-tag-neutral">{{name}}</span>
+                                {{/fullcategorytags}}
+                            </div>
+                        </div>
+                        {{/hasfullcategorytags}}
+                        {{/issourceenrolledextra}}
+
+                        <!-- Actions & Badges -->
+                        <div class="transcript-actions-row pt-3 border-top d-flex align-items-center justify-content-between flex-wrap">
+                            <!-- Left Side Action Button -->
+                            <div class="transcript-action-left">
+                                {{#hasmoodlecourse}}
+                                    {{#isenrolled}}
+                                        <a href="{{moodlecourseurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-primary w-100">
+                                            {{#str}} gotocourse, block_academic_dashboard_esse3 {{/str}}
+                                        </a>
+                                    {{/isenrolled}}
+                                    {{^isenrolled}}
+                                        <a href="{{enrolurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-outline w-100">
+                                            {{#str}} enrol, block_academic_dashboard_esse3 {{/str}}
+                                        </a>
+                                    {{/isenrolled}}
+                                {{/hasmoodlecourse}}
+                                {{^hasmoodlecourse}}
+                                    <button class="btn btn-light btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase text-muted border-0 bg-light w-100" disabled>
+                                        <i class="fa fa-clock-o mr-2"></i>{{#str}} coursenotavailable, block_academic_dashboard_esse3 {{/str}}
+                                    </button>
+                                {{/hasmoodlecourse}}
+                            </div>
+
+                            <!-- Right Side Badges -->
+                            <div class="transcript-action-right d-flex align-items-center flex-wrap mt-2">
+                                {{#courseYear}}
+                                <span class="badge border font-weight-normal rounded-pill px-2 py-1 text-muted bg-transparent small">{{courseYear}}° ANNO</span>
+                                {{/courseYear}}
+
+                                {{#weight}}
+                                <span class="badge border font-weight-normal rounded-pill px-2 py-1 text-muted bg-transparent small">{{weight}} CFU</span>
+                                {{/weight}}
+
+                                {{#hassyllabus}}
+                                <button class="btn rounded-circle transcript-syllabus-btn d-flex align-items-center justify-content-center p-0 shadow-sm ml-auto"
+                                        data-matid="{{careerMatId}}"
+                                        data-adsceid="{{adsceId}}"
+                                        data-blockid="{{blockid}}"
+                                        data-title="{{adDes}}"
+                                        title="{{#str}} syllabus, block_academic_dashboard_esse3 {{/str}}">
+                                    <span class="transcript-syllabus-icon font-weight-bold">i</span>
+                                </button>
+                                {{/hassyllabus}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/courses}}
+    </div>
+
+    <!-- No results message (hidden by default) -->
+    <div class="transcript-no-results d-none text-center p-5 bg-white rounded shadow-sm">
+        <i class="fa fa-search fa-3x text-light mb-3"></i>
+        <h5 class="font-weight-bold">{{#str}} no_results, block_academic_dashboard_esse3 {{/str}}</h5>
+    </div>
+
+    <!-- Syllabus Modal -->
+    <div class="modal fade transcript-syllabus-modal" id="transcript-syllabus-modal-{{blockid}}" tabindex="-1" role="dialog" aria-labelledby="transcript-syllabus-label-{{blockid}}" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg transcript-modal-content">
+                <div class="modal-header text-white border-0 transcript-modal-header">
+                    <h5 class="modal-title font-weight-bold" id="transcript-syllabus-label-{{blockid}}">
+                        {{#str}} syllabus, block_academic_dashboard_esse3 {{/str}}
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="transcript-syllabus-loading text-center p-5 d-none">
+                        <div class="spinner-border mb-2 transcript-spinner" role="status"></div>
+                        <p class="text-muted small">{{#str}} syllabus_loading, block_academic_dashboard_esse3 {{/str}}</p>
+                    </div>
+                    <div class="transcript-syllabus-content p-4">
+                        <!-- Content will be injected here via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/hascourses}}
+</div>

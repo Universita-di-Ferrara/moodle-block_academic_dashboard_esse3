@@ -1,0 +1,28 @@
+{{!
+    @template block_academic_dashboard_esse3/syllabus_section
+
+    Renders one syllabus section with icon, label and content.
+
+    Context variables required for this template:
+        * icon - FontAwesome icon class (e.g. fa-bullseye)
+        * label - section heading text
+        * content - HTML content for the section body
+        * divider - boolean, if true render an hr before this section
+
+    Example context (json):
+    {
+        "icon": "fa-bullseye",
+        "label": "Objectives",
+        "content": "<p>Learning objectives</p>",
+        "divider": false
+    }
+}}
+{{#divider}}
+<hr class="my-4">
+{{/divider}}
+<div class="syllabus-section shadow-sm">
+    <h6 class="font-weight-bold text-dark">
+        <i class="fa {{icon}}"></i>{{label}}
+    </h6>
+    <div class="syllabus-text">{{{content}}}</div>
+</div>

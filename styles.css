@@ -1,0 +1,584 @@
+/**
+ * Premium CSS for block_academic_dashboard_esse3.
+ * Fluid, responsive and modern design.
+ */
+
+:root {
+    --transcript-primary: #0056b3;
+    --transcript-success: #28a745;
+    --transcript-warning: #ffc107;
+    --transcript-info: #17a2b8;
+    --transcript-gray-light: #f8f9fa;
+    --transcript-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --transcript-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --transcript-radius: 12px;
+    --transcript-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Container */
+.block-esse3-transcript-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Controls bar */
+.transcript-controls {
+    background: white;
+    border-radius: var(--transcript-radius);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--transcript-shadow);
+    border: 1px solid rgb(255, 255, 255);
+}
+
+.transcript-controls .form-control {
+    border-radius: var(--transcript-radius);
+    border: 1px solid #fff;
+    background-color: #f8f9fa;
+    height: 38px;
+    transition: var(--transcript-transition);
+}
+
+.transcript-controls .input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #fff;
+    border-radius: var(--transcript-radius);
+}
+
+.transcript-controls .input-group-prepend,
+.transcript-controls .input-group-append {
+    border: none;
+    background-color: transparent;
+}
+
+.transcript-controls .input-group {
+    border-radius: var(--transcript-radius);
+    overflow: hidden;
+}
+
+.transcript-controls .input-group .input-group-text {
+    border-radius: var(--transcript-radius) 0 0 var(--transcript-radius);
+}
+
+.transcript-controls .input-group .form-control {
+    border-radius: 0 var(--transcript-radius) var(--transcript-radius) 0;
+}
+
+.transcript-controls .border-right-0 {
+    border-right: 0;
+}
+
+.transcript-controls .border-left-0 {
+    border-left: 0;
+}
+
+.transcript-source-tabs {
+    padding: 0.1rem 0 0;
+}
+
+.transcript-source-tabs .transcript-subcategory-nav {
+    margin-bottom: 0;
+}
+
+.transcript-source-badge {
+    background: rgba(255, 193, 7, 0.18);
+    color: #7a5b00;
+    border: 1px solid rgba(255, 193, 7, 0.4);
+    font-weight: 700;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Grid/List View Containers */
+.transcript-items-container {
+    transition: var(--transcript-transition);
+}
+
+.transcript-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+}
+
+.transcript-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.transcript-list-container .transcript-item {
+    width: 100%;
+}
+
+/* Cards */
+.transcript-item {
+    transition: var(--transcript-transition);
+    transform-origin: center;
+}
+
+.transcript-item.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+    display: none;
+}
+
+.transcript-item .card {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: var(--transcript-radius);
+    box-shadow: var(--transcript-shadow);
+    transition: var(--transcript-transition);
+    overflow: hidden;
+    position: relative;
+}
+
+.transcript-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--transcript-primary, #0056b3);
+    display: block;
+    border-radius: var(--transcript-radius) var(--transcript-radius) 0 0;
+}
+
+.transcript-item:hover .card {
+    transform: translateY(-4px);
+    box-shadow: var(--transcript-shadow-hover);
+}
+
+.transcript-item .card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.transcript-category-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+}
+
+.block-esse3-transcript-container .btn.transcript-category-toggle {
+    border-radius: 0.9rem;
+    padding: 0.85rem 1rem;
+    background: var(--transcript-primary, #0056b3);
+    border-color: var(--transcript-primary, #0056b3);
+    color: var(--transcript-on-primary, #ffffff);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.block-esse3-transcript-container .btn.transcript-category-toggle:hover,
+.block-esse3-transcript-container .btn.transcript-category-toggle:focus {
+    text-decoration: none;
+    background: var(--transcript-primary, #0056b3);
+    border-color: var(--transcript-primary, #0056b3);
+    color: var(--transcript-on-primary, #ffffff);
+    filter: brightness(0.96);
+}
+
+.block-esse3-transcript-container .transcript-category-toggle .transcript-category-title,
+.block-esse3-transcript-container .transcript-category-toggle .fa {
+    color: inherit !important;
+}
+
+.transcript-category-toggle .fa,
+.transcript-subcategory-toggle .fa {
+    transition: transform 0.2s ease;
+}
+
+.transcript-category-toggle[aria-expanded="true"] .fa,
+.transcript-subcategory-toggle[aria-expanded="true"] .fa {
+    transform: rotate(180deg);
+}
+
+.transcript-subcategory-tabs {
+    padding: 0.35rem 0.35rem 0 0.35rem;
+    border-left: 2px solid rgba(0, 0, 0, 0.06);
+    margin-left: 0.35rem;
+}
+
+.transcript-subcategory-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+}
+
+.block-esse3-transcript-container .transcript-subcategory-nav .transcript-subcategory-tablink {
+    border-radius: 999px;
+    padding: 0.6rem 0.95rem;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid var(--transcript-primary, #0056b3);
+    color: var(--transcript-primary, #0056b3);
+    box-shadow: none;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.block-esse3-transcript-container .transcript-subcategory-nav .transcript-subcategory-tablink:hover,
+.block-esse3-transcript-container .transcript-subcategory-nav .transcript-subcategory-tablink:focus {
+    text-decoration: none;
+    color: var(--transcript-on-primary, #ffffff);
+    background: var(--transcript-primary, #0056b3);
+    border-color: var(--transcript-primary, #0056b3);
+}
+
+.block-esse3-transcript-container .transcript-subcategory-nav .transcript-subcategory-tablink.active,
+.block-esse3-transcript-container .transcript-subcategory-nav .show > .transcript-subcategory-tablink {
+    background: var(--transcript-primary, #0056b3);
+    border-color: var(--transcript-primary, #0056b3);
+    color: var(--transcript-on-primary, #ffffff);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.block-esse3-transcript-container .transcript-subcategory-nav .transcript-subcategory-tablink.active .transcript-subcategory-title,
+.block-esse3-transcript-container .transcript-subcategory-nav .transcript-subcategory-tablink:hover .transcript-subcategory-title,
+.block-esse3-transcript-container .transcript-subcategory-nav .transcript-subcategory-tablink:focus .transcript-subcategory-title {
+    color: var(--transcript-on-primary, #ffffff);
+}
+
+.block-esse3-transcript-container .transcript-subcategory-nav .transcript-subcategory-tablink .transcript-subcategory-title {
+    color: inherit;
+}
+
+.transcript-subcategory-panels {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+}
+
+.transcript-subcategory-pane {
+    animation: fadeIn 0.28s ease;
+}
+
+.transcript-subcategory-title {
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+}
+
+/* Card elements */
+.transcript-card-head {
+    min-height: 1.6rem;
+}
+
+.transcript-card-status-row {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.transcript-cds-name {
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+    line-height: 1.35;
+    min-height: calc(1.35em * 2);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.transcript-course-title {
+    font-size: 1.1rem;
+    line-height: 1.25;
+    color: var(--transcript-primary, #0056b3);
+    min-height: calc(1.25em * 3);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+}
+
+.transcript-teacher-name {
+    min-height: 1.5rem;
+    line-height: 1.2;
+    min-width: 0;
+}
+
+.transcript-teacher-text {
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+}
+
+.transcript-teacher-placeholder {
+    visibility: hidden;
+}
+
+.transcript-course-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.transcript-course-tags-fullpath {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.transcript-course-context {
+    padding-top: 0.15rem;
+}
+
+.transcript-course-tags-secondary {
+    gap: 0.35rem;
+}
+
+.transcript-course-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1;
+    background: transparent;
+    border: 1px solid #ced4da;
+    color: #6c757d;
+}
+
+.transcript-course-tag-neutral {
+    background: transparent;
+    border-color: #ced4da;
+    color: #6c757d;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* Actions row */
+.transcript-actions-row {
+    gap: 10px;
+}
+
+.transcript-action-left {
+    flex: 1 1 100%;
+    min-width: 0;
+}
+
+.transcript-action-left .btn {
+    min-height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transcript-action-right {
+    flex: 1 1 100%;
+    gap: 0.5rem;
+}
+
+.block-esse3-transcript-container .transcript-action-right .badge,
+.block-esse3-transcript-container .transcript-action-right .transcript-syllabus-btn {
+    padding: 0.35rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Accent-colored buttons */
+.block-esse3-transcript-container .transcript-btn-primary {
+    background-color: var(--transcript-primary, #0056b3);
+    border-color: var(--transcript-primary, #0056b3);
+    color: var(--transcript-on-primary, #ffffff);
+}
+
+.block-esse3-transcript-container .transcript-btn-primary:hover {
+    opacity: 0.9;
+    color: var(--transcript-on-primary, #ffffff);
+}
+
+.block-esse3-transcript-container .transcript-btn-primary:focus,
+.block-esse3-transcript-container .transcript-btn-primary:active {
+    color: var(--transcript-on-primary, #ffffff);
+}
+
+.block-esse3-transcript-container .transcript-btn-outline {
+    background-color: transparent;
+    border-color: var(--transcript-primary, #0056b3);
+    color: var(--transcript-primary, #0056b3);
+}
+
+.block-esse3-transcript-container .transcript-btn-outline:hover {
+    background-color: var(--transcript-primary, #0056b3);
+    color: var(--transcript-on-primary, #ffffff);
+}
+
+.block-esse3-transcript-container .transcript-btn-outline:focus,
+.block-esse3-transcript-container .transcript-btn-outline:active {
+    color: var(--transcript-on-primary, #ffffff);
+}
+
+.block-esse3-transcript-container .transcript-btn-primary span,
+.block-esse3-transcript-container .transcript-btn-outline span,
+.block-esse3-transcript-container .transcript-btn-primary i,
+.block-esse3-transcript-container .transcript-btn-outline i {
+    color: inherit;
+}
+
+/* Syllabus info button */
+.block-esse3-transcript-container .transcript-syllabus-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    background-color: var(--transcript-primary, #0056b3);
+    border-color: var(--transcript-primary, #0056b3);
+    padding: 0;
+}
+
+.block-esse3-transcript-container .transcript-syllabus-btn:hover {
+    opacity: 0.9;
+}
+
+.transcript-syllabus-icon {
+    font-size: 0.7rem;
+    color: white;
+}
+
+/* View toggle active state */
+.block-esse3-transcript-container .transcript-view-toggle.active {
+    background-color: var(--transcript-primary, #0056b3);
+    color: white;
+    border-color: var(--transcript-primary, #0056b3);
+}
+
+/* Modal */
+.transcript-modal-content {
+    border-radius: var(--transcript-radius);
+}
+
+.transcript-modal-header {
+    background-color: var(--transcript-primary, #0056b3);
+    border-radius: var(--transcript-radius) var(--transcript-radius) 0 0;
+}
+
+.transcript-spinner {
+    color: var(--transcript-primary, #0056b3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.transcript-item:not(.hidden) {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+/* Syllabus Modal content */
+.transcript-syllabus-modal .modal-content {
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    background-color: #fdfdfd;
+}
+
+.transcript-syllabus-modal .modal-header {
+    background: var(--transcript-primary, #0056b3);
+    color: white;
+    padding: 1.5rem 2rem;
+    border-bottom: none;
+}
+
+.transcript-syllabus-modal .modal-title {
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+}
+
+.transcript-syllabus-modal .modal-body {
+    padding: 2rem;
+}
+
+/* Syllabus sections */
+.syllabus-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-left: 4px solid var(--transcript-primary, #0056b3);
+    transition: var(--transcript-transition);
+}
+
+.syllabus-section:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.syllabus-section h6 {
+    display: flex;
+    align-items: center;
+    color: #495057;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.syllabus-section h6 i {
+    width: 32px;
+    height: 32px;
+    background: var(--transcript-primary, #0056b3);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.syllabus-text {
+    color: #555;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.syllabus-text ul {
+    padding-left: 1.25rem;
+}
+
+/* Syllabus section entrance animation */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.syllabus-section {
+    animation: slideUp 0.5s ease forwards;
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+    .transcript-grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .transcript-subcategory-nav {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .transcript-controls .row > div {
+        margin-bottom: 0.75rem;
+    }
+
+    .transcript-syllabus-modal .modal-body {
+        padding: 1.25rem;
+    }
+}

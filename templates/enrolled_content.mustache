@@ -1,0 +1,242 @@
+{{!
+    @template block_academic_dashboard_esse3/enrolled_content
+
+    Template for fallback view when user matricola is not available.
+    Shows only Moodle enrolled courses with minimal fields.
+}}
+<div class="block-esse3-transcript-container" id="transcript-block-{{blockid}}" style="--transcript-primary: {{{accentcolor}}}; --transcript-on-primary: {{{accenttextcolor}}};">
+    {{^hascourses}}
+    <div class="alert alert-info">
+        {{#str}} nocourses, block_academic_dashboard_esse3 {{/str}}
+    </div>
+    {{/hascourses}}
+
+    {{#hascourses}}
+    <div class="transcript-controls">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-md-12">
+                <div class="input-group shadow-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0"><i class="fa fa-search text-muted"></i></span>
+                    </div>
+                    <input type="text" class="form-control transcript-enrolled-search border-left-0" placeholder="{{#str}} search, block_academic_dashboard_esse3 {{/str}}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{#hasgroups}}
+    <div class="accordion" id="transcript-enrolled-accordion-{{blockid}}">
+    {{#groupedcategories}}
+    <div class="transcript-category-group mb-4" data-group="{{groupname}}">
+        <button class="btn w-100 text-left d-flex align-items-center justify-content-between transcript-category-toggle mb-3"
+                type="button"
+                data-toggle="collapse"
+                data-target="#{{groupid}}"
+                aria-expanded="false"
+                aria-controls="{{groupid}}"
+                data-action="toggle-category">
+            <span class="transcript-category-title text-uppercase font-weight-bold mb-0">{{groupname}}</span>
+            <i class="fa fa-chevron-down"></i>
+        </button>
+        <div class="collapse" id="{{groupid}}" data-parent="#transcript-enrolled-accordion-{{blockid}}">
+        {{#hassubgroups}}
+            <div class="transcript-subcategory-tabs" data-subcategory-tabs>
+                <div class="nav nav-pills transcript-subcategory-nav mb-3" role="tablist" aria-label="{{groupname}}">
+            {{#subgroups}}
+                    <a class="nav-link transcript-subcategory-tablink {{#isactive}}active{{/isactive}}"
+                       id="{{subgroupbuttonid}}"
+                       data-toggle="tab"
+                       href="#{{subgrouppaneid}}"
+                       role="tab"
+                       aria-controls="{{subgrouppaneid}}"
+                       aria-selected="{{#isactive}}true{{/isactive}}{{^isactive}}false{{/isactive}}">
+                        <span class="transcript-subcategory-title font-weight-bold mb-0">{{subgroupname}}</span>
+                    </a>
+            {{/subgroups}}
+                </div>
+                <div class="tab-content transcript-subcategory-panels">
+            {{#subgroups}}
+                    <div class="tab-pane fade transcript-subcategory-pane {{#isactive}}show active{{/isactive}}"
+                         id="{{subgrouppaneid}}"
+                         role="tabpanel"
+                         aria-labelledby="{{subgroupbuttonid}}"
+                         data-subgroup-pane>
+                        <div class="transcript-items-container transcript-grid-container">
+                    {{#courses}}
+                    <div class="transcript-item" data-search="{{searchtext}}">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <span class="transcript-card"></span>
+                            <div class="card-body d-flex flex-column p-4">
+                                <div class="transcript-card-head mb-2">
+                                    <div class="transcript-card-status-row">
+                                        <span class="badge transcript-source-badge">{{#str}} enrolled, block_academic_dashboard_esse3 {{/str}}</span>
+                                    </div>
+                                </div>
+
+                                <h5 class="transcript-course-title font-weight-bold mb-2" title="{{adDes}}">
+                                    {{adDes}}
+                                </h5>
+
+                                <div class="mt-auto">
+                                    {{#teacher}}
+                                    <div class="transcript-teacher-name text-muted d-flex align-items-center mb-3 small" title="{{#str}} teacher, block_academic_dashboard_esse3 {{/str}}: {{teacher}}">
+                                        <i class="fa fa-user-o mr-2"></i>
+                                        <span class="transcript-teacher-text">{{teacher}}</span>
+                                    </div>
+                                    {{/teacher}}
+                                    {{^teacher}}
+                                    <div class="transcript-teacher-name transcript-teacher-placeholder d-flex align-items-center mb-3 small" aria-hidden="true">
+                                        <i class="fa fa-user-o mr-2"></i>
+                                        <span class="transcript-teacher-text">&nbsp;</span>
+                                    </div>
+                                    {{/teacher}}
+                                    {{#hasfullcategorytags}}
+                                    <div class="transcript-course-context mb-3">
+                                        <div class="transcript-course-tags transcript-course-tags-secondary">
+                                            {{#fullcategorytags}}
+                                            <span class="transcript-course-tag transcript-course-tag-neutral">{{name}}</span>
+                                            {{/fullcategorytags}}
+                                        </div>
+                                    </div>
+                                    {{/hasfullcategorytags}}
+
+                                    <div class="transcript-actions-row pt-3 border-top d-flex align-items-center justify-content-between flex-wrap">
+                                    <div class="transcript-action-left">
+                                            <a href="{{moodlecourseurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-primary w-100">
+                                                {{#str}} gotocourse, block_academic_dashboard_esse3 {{/str}}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/courses}}
+                        </div>
+                    </div>
+            {{/subgroups}}
+                </div>
+            </div>
+        {{/hassubgroups}}
+        {{^hassubgroups}}
+            <div class="transcript-items-container transcript-grid-container">
+                {{#courses}}
+                <div class="transcript-item" data-search="{{searchtext}}">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <span class="transcript-card"></span>
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="transcript-card-head mb-2">
+                                <div class="transcript-card-status-row">
+                                    <span class="badge transcript-source-badge">{{#str}} enrolled, block_academic_dashboard_esse3 {{/str}}</span>
+                                </div>
+                            </div>
+
+                            <h5 class="transcript-course-title font-weight-bold mb-2" title="{{adDes}}">
+                                {{adDes}}
+                            </h5>
+
+                            <div class="mt-auto">
+                                {{#teacher}}
+                                <div class="transcript-teacher-name text-muted d-flex align-items-center mb-3 small" title="{{#str}} teacher, block_academic_dashboard_esse3 {{/str}}: {{teacher}}">
+                                    <i class="fa fa-user-o mr-2"></i>
+                                    <span class="transcript-teacher-text">{{teacher}}</span>
+                                </div>
+                                {{/teacher}}
+                                {{^teacher}}
+                                <div class="transcript-teacher-name transcript-teacher-placeholder d-flex align-items-center mb-3 small" aria-hidden="true">
+                                    <i class="fa fa-user-o mr-2"></i>
+                                    <span class="transcript-teacher-text">&nbsp;</span>
+                                </div>
+                                {{/teacher}}
+                                {{#hasfullcategorytags}}
+                                <div class="transcript-course-context mb-3">
+                                    <div class="transcript-course-tags transcript-course-tags-secondary">
+                                        {{#fullcategorytags}}
+                                        <span class="transcript-course-tag transcript-course-tag-neutral">{{name}}</span>
+                                        {{/fullcategorytags}}
+                                    </div>
+                                </div>
+                                {{/hasfullcategorytags}}
+
+                                <div class="transcript-actions-row pt-3 border-top d-flex align-items-center justify-content-between flex-wrap">
+                                    <div class="transcript-action-left">
+                                        <a href="{{moodlecourseurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-primary w-100">
+                                            {{#str}} gotocourse, block_academic_dashboard_esse3 {{/str}}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/courses}}
+            </div>
+        {{/hassubgroups}}
+        </div>
+    </div>
+    {{/groupedcategories}}
+    </div>
+    {{/hasgroups}}
+
+    {{^hasgroups}}
+    <div class="transcript-items-container transcript-grid-container">
+        {{#courses}}
+        <div class="transcript-item" data-search="{{searchtext}}">
+            <div class="card h-100 border-0 shadow-sm">
+                <span class="transcript-card"></span>
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="transcript-card-head mb-2">
+                        <div class="transcript-card-status-row">
+                            <span class="badge transcript-source-badge">{{#str}} enrolled, block_academic_dashboard_esse3 {{/str}}</span>
+                        </div>
+                    </div>
+
+                    <h5 class="transcript-course-title font-weight-bold mb-2" title="{{adDes}}">
+                        {{adDes}}
+                    </h5>
+
+                    <div class="mt-auto">
+                        {{#teacher}}
+                        <div class="transcript-teacher-name text-muted d-flex align-items-center mb-3 small" title="{{#str}} teacher, block_academic_dashboard_esse3 {{/str}}: {{teacher}}">
+                            <i class="fa fa-user-o mr-2"></i>
+                            <span class="transcript-teacher-text">{{teacher}}</span>
+                        </div>
+                        {{/teacher}}
+                        {{^teacher}}
+                        <div class="transcript-teacher-name transcript-teacher-placeholder d-flex align-items-center mb-3 small" aria-hidden="true">
+                            <i class="fa fa-user-o mr-2"></i>
+                            <span class="transcript-teacher-text">&nbsp;</span>
+                        </div>
+                        {{/teacher}}
+                        {{#hasfullcategorytags}}
+                        <div class="transcript-course-context mb-3">
+                            <div class="transcript-course-tags transcript-course-tags-secondary">
+                                {{#fullcategorytags}}
+                                <span class="transcript-course-tag transcript-course-tag-neutral">{{name}}</span>
+                                {{/fullcategorytags}}
+                            </div>
+                        </div>
+                        {{/hasfullcategorytags}}
+
+                        <div class="transcript-actions-row pt-3 border-top d-flex align-items-center justify-content-between flex-wrap">
+                            <div class="transcript-action-left">
+                                <a href="{{moodlecourseurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-primary w-100">
+                                    {{#str}} gotocourse, block_academic_dashboard_esse3 {{/str}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/courses}}
+    </div>
+    {{/hasgroups}}
+
+    <div class="transcript-no-results d-none text-center p-5 bg-white rounded shadow-sm">
+        <i class="fa fa-search fa-3x text-light mb-3"></i>
+        <h5 class="font-weight-bold">{{#str}} no_results, block_academic_dashboard_esse3 {{/str}}</h5>
+    </div>
+    {{/hascourses}}
+</div>
