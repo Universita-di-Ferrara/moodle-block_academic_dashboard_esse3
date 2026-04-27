@@ -33,6 +33,7 @@
         "hascourses": true,
         "blockid": "1",
         "accentcolor": "#0056b3",
+        "accenttextcolor": "#fff",
         "courses": [
             {
                 "adDes": "Mathematics I",
@@ -45,7 +46,7 @@
     }
 }}
 
-<div class="block-esse3-transcript-container" id="transcript-block-{{blockid}}" style="--transcript-primary: {{{accentcolor}}}; --transcript-on-primary: {{{accenttextcolor}}};">
+<div class="block-esse3-transcript-container" id="transcript-block-{{blockid}}" style="--transcript-primary: {{#accentcolor}}{{{accentcolor}}}{{/accentcolor}}{{^accentcolor}}#0056b3{{/accentcolor}}; --transcript-on-primary: {{#accenttextcolor}}{{{accenttextcolor}}}{{/accenttextcolor}}{{^accenttextcolor}}#fff{{/accenttextcolor}};">
     {{^hascourses}}
     <div class="alert alert-info">
         {{#str}} nocourses, block_academic_dashboard_esse3 {{/str}}

@@ -3,8 +3,31 @@
 
     Template for fallback view when user matricola is not available.
     Shows only Moodle enrolled courses with minimal fields.
+
+    Example context (json):
+    {
+        "hascourses": true,
+        "hasgroups": false,
+        "blockid": "1",
+        "accentcolor": "#0056b3",
+        "accenttextcolor": "#fff",
+        "courses": [
+            {
+                "adDes": "Algorithms",
+                "teacher": "Ada Lovelace",
+                "searchtext": "Algorithms Ada Lovelace Computer Science",
+                "moodlecourseurl": "https://example.test/course/view.php?id=12",
+                "hasfullcategorytags": true,
+                "fullcategorytags": [
+                    {
+                        "name": "Computer Science"
+                    }
+                ]
+            }
+        ]
+    }
 }}
-<div class="block-esse3-transcript-container" id="transcript-block-{{blockid}}" style="--transcript-primary: {{{accentcolor}}}; --transcript-on-primary: {{{accenttextcolor}}};">
+<div class="block-esse3-transcript-container" id="transcript-block-{{blockid}}" style="--transcript-primary: {{#accentcolor}}{{{accentcolor}}}{{/accentcolor}}{{^accentcolor}}#0056b3{{/accentcolor}}; --transcript-on-primary: {{#accenttextcolor}}{{{accenttextcolor}}}{{/accenttextcolor}}{{^accenttextcolor}}#fff{{/accenttextcolor}};">
     {{^hascourses}}
     <div class="alert alert-info">
         {{#str}} nocourses, block_academic_dashboard_esse3 {{/str}}
