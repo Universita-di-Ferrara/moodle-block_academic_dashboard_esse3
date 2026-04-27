@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2026042117;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2024100700;        // Requires this Moodle version (4.1).
+$plugin->requires  = 2024100700;        // Requires this Moodle version (4.5).
 $plugin->component = 'block_academic_dashboard_esse3'; // Full name of the plugin (used for diagnostics, etc).
 $plugin->release   = '1.0.0';           // Human-readable version name.
 $plugin->maturity  = MATURITY_STABLE;   // Maturity level.
