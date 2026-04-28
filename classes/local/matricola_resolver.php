@@ -14,19 +14,39 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace block_academic_dashboard_esse3\local;
+
 /**
- * Version information for the block_academic_dashboard_esse3 plugin.
+ * Resolves the configured matricola value for a Moodle user.
  *
  * @package   block_academic_dashboard_esse3
  * @copyright 2026 Università degli Studi di Ferrara - Unife
  * @author    Andrea Bertelli <andrea.bertelli@unife.it>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class matricola_resolver {
+    /**
+     * Resolve the configured matricola value from standard or custom profile fields.
+     *
+     * @param \stdClass $user
+     * @return string
+     */
+    public static function resolve_for_user(\stdClass $user): string {
+        $fieldname = (string)get_config('block_academic_dashboard_esse3', 'matricolafield');
 
-defined('MOODLE_INTERNAL') || die();
+        if ($fieldname !== '' && isset($user->$fieldname)) {
+            return trim((string)$user->$fieldname);
+        }
 
-$plugin->version   = 2026042800;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2024100700;        // Requires this Moodle version (4.5).
-$plugin->component = 'block_academic_dashboard_esse3'; // Full name of the plugin (used for diagnostics, etc).
-$plugin->release   = '1.0.1';           // Human-readable version name.
-$plugin->maturity  = MATURITY_STABLE;   // Maturity level.
+        if (
+            $fieldname !== '' &&
+            !empty($user->profile) &&
+            is_array($user->profile) &&
+            array_key_exists($fieldname, $user->profile)
+        ) {
+            return trim((string)$user->profile[$fieldname]);
+        }
+
+        return '';
+    }
+}

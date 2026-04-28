@@ -34,7 +34,9 @@ use external_function_parameters;
 use external_value;
 use external_single_structure;
 use external_multiple_structure;
+use moodle_exception;
 use block_academic_dashboard_esse3\local\esse3\esse3_handler;
+use block_academic_dashboard_esse3\local\matricola_resolver;
 
 /**
  * Class get_syllabus
@@ -62,6 +64,8 @@ class get_syllabus extends external_api {
      * @return array
      */
     public static function execute($matid, $adsceid) {
+        global $USER;
+
         $params = self::validate_parameters(self::execute_parameters(), [
             'matId' => $matid,
             'adsceId' => $adsceid,
@@ -70,7 +74,22 @@ class get_syllabus extends external_api {
         $context = \context_system::instance();
         self::validate_context($context);
 
+        $matricola = matricola_resolver::resolve_for_user($USER);
+        if ($matricola === '') {
+            throw new moodle_exception('privacy:missingmatricola', 'block_academic_dashboard_esse3');
+        }
+
         $handler = new esse3_handler();
+        $careers = $handler->get_careers_by_matricola($matricola);
+
+        $allowedmatids = array_map(static function ($career): int {
+            return isset($career->matId) ? (int)$career->matId : 0;
+        }, $careers);
+
+        if (!in_array((int)$params['matId'], $allowedmatids, true)) {
+            throw new moodle_exception('privacy:invalidmatid', 'block_academic_dashboard_esse3');
+        }
+
         $syllabus = $handler->get_syllabus($params['matId'], $params['adsceId']);
 
         if ($syllabus === false) {

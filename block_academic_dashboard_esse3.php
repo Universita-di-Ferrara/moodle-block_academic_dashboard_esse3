@@ -27,30 +27,6 @@
  */
 class block_academic_dashboard_esse3 extends block_base {
     /**
-     * Resolve the configured matricola value from standard or custom profile fields.
-     *
-     * @param \stdClass $user
-     * @param string $fieldname
-     * @return string
-     */
-    private function get_user_matricola_value(\stdClass $user, string $fieldname): string {
-        if ($fieldname !== '' && isset($user->$fieldname)) {
-            return trim((string)$user->$fieldname);
-        }
-
-        if (
-            $fieldname !== '' &&
-            !empty($user->profile) &&
-            is_array($user->profile) &&
-            array_key_exists($fieldname, $user->profile)
-        ) {
-            return trim((string)$user->profile[$fieldname]);
-        }
-
-        return '';
-    }
-
-    /**
      * Normalizes a hex color string.
      *
      * @param string $color
@@ -121,9 +97,7 @@ class block_academic_dashboard_esse3 extends block_base {
         $this->content->footer = '';
         $this->content->text = '';
 
-        // Use configured user field as matricola source.
-        $matricolafield = get_config('block_academic_dashboard_esse3', 'matricolafield');
-        $matricola = $this->get_user_matricola_value($USER, (string)$matricolafield);
+        $matricola = \block_academic_dashboard_esse3\local\matricola_resolver::resolve_for_user($USER);
 
         $manager = new \block_academic_dashboard_esse3\transcript_manager();
         $data = $manager->get_transcript_template_data($matricola, $this->instance->id, (int)$USER->id);
