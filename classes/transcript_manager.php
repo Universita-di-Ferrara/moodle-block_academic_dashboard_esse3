@@ -72,7 +72,10 @@ class transcript_manager {
             $helper->mark_course_source($extraenrolledcourses, 'enrolledextra');
             $data['courses'] = array_merge($data['courses'], $extraenrolledcourses);
         }
+        $this->remove_transcript_courses_without_teacher($data['courses']);
+        $this->refresh_transcript_filter_data($data);
         $helper->populate_source_filter_data($data);
+        $data['hascourses'] = !empty($data['courses']);
         $data['datasource'] = 'transcript';
 
         return $data;
@@ -225,6 +228,56 @@ class transcript_manager {
                 $course->teacher = \core_text::strtotitle($course->teacher);
             }
         }
+    }
+
+    /**
+     * Remove transcript-backed courses that still have no reference teacher.
+     *
+     * @param array $courses
+     * @return void
+     */
+    private function remove_transcript_courses_without_teacher(array &$courses): void {
+        $courses = array_values(array_filter($courses, static function ($course): bool {
+            if (($course->sourcekey ?? '') !== 'transcript') {
+                return true;
+            }
+
+            return trim((string)($course->teacher ?? '')) !== '';
+        }));
+    }
+
+    /**
+     * Rebuild transcript year/status filters after hiding transcript courses.
+     *
+     * @param array $data
+     * @return void
+     */
+    private function refresh_transcript_filter_data(array &$data): void {
+        $uniqueyears = [];
+        $uniquestatuses = [];
+
+        foreach ($data['courses'] as $course) {
+            if (($course->sourcekey ?? '') !== 'transcript') {
+                continue;
+            }
+
+            if (!empty($course->courseYear)) {
+                $uniqueyears[$course->courseYear] = $course->courseYear;
+            }
+            if (!empty($course->statusDes)) {
+                $uniquestatuses[$course->statusDes] = $course->statusDes;
+            }
+        }
+
+        ksort($uniqueyears);
+        ksort($uniquestatuses);
+
+        $data['years'] = array_map(static function ($value): array {
+            return ['value' => $value];
+        }, array_values($uniqueyears));
+        $data['statuses'] = array_map(static function ($value): array {
+            return ['value' => $value];
+        }, array_values($uniquestatuses));
     }
 
     /**

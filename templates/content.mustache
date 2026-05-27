@@ -55,10 +55,10 @@
 
     {{#hascourses}}
     <!-- Controls: Search and Filters -->
-    <div class="transcript-controls">
-        <div class="row align-items-center justify-content-between">
+    <div class="transcript-controls bg-white rounded p-3 mb-4 shadow-sm border border-white">
+        <div class="row align-items-center">
             <!-- Search -->
-            <div class="col-md-5">
+            <div class="col-12">
                 <div class="input-group shadow-sm">
                     <div class="input-group-prepend">
                         <span class="input-group-text bg-white border-right-0"><i class="fa fa-search text-muted"></i></span>
@@ -66,23 +66,26 @@
                     <input type="text" class="form-control transcript-search border-left-0" placeholder="{{#str}} search, block_academic_dashboard_esse3 {{/str}}">
                 </div>
             </div>
-
+        </div>
             <!-- Filters -->
-            <div class="col-md-7 d-flex align-items-center justify-content-between">
-                <select class="form-control transcript-filter-year mr-2 w-auto shadow-sm">
+        <div class="row mt-1 align-items-center">
+            <div class="col-auto mt-2">
+                <select class="form-control transcript-filter-year shadow-sm">
                     <option value="">{{#str}} all_years, block_academic_dashboard_esse3 {{/str}}</option>
                     {{#years}}
                     <option value="{{value}}">{{value}}</option>
                     {{/years}}
                 </select>
-
-                <select class="form-control transcript-filter-status mr-3 w-auto shadow-sm">
+            </div>
+            <div class="col-auto mt-2">
+                <select class="form-control transcript-filter-status shadow-sm">
                     <option value="">{{#str}} all_statuses, block_academic_dashboard_esse3 {{/str}}</option>
                     {{#statuses}}
                     <option value="{{value}}">{{value}}</option>
                     {{/statuses}}
                 </select>
-
+            </div>
+            <div class="col-12 col-sm-auto mt-2 ml-sm-auto d-flex justify-content-start justify-content-sm-end">
                 <div class="btn-group shadow-sm" role="group">
                     <button type="button" class="btn btn-outline-secondary transcript-view-toggle active" data-view="grid" title="{{#str}} grid_view, block_academic_dashboard_esse3 {{/str}}">
                         <i class="fa fa-th-large"></i>
@@ -93,38 +96,40 @@
                 </div>
             </div>
         </div>
-
         {{#hasoriginfilters}}
-        <div class="transcript-source-tabs mt-3" data-origin-tabs>
-            <div class="nav nav-pills transcript-subcategory-nav" role="tablist" aria-label="{{#str}} filter_by, block_academic_dashboard_esse3 {{/str}}">
-                <a href="#"
-                   class="nav-link transcript-subcategory-tablink transcript-origin-tablink active"
-                   data-origin-filter="transcript"
-                   role="tab"
-                   aria-selected="true">
-                    <span class="transcript-subcategory-title font-weight-bold mb-0">
-                        {{#str}} in_transcript, block_academic_dashboard_esse3 {{/str}} ({{transcriptcoursecount}})
-                    </span>
-                </a>
-                <a href="#"
-                   class="nav-link transcript-subcategory-tablink transcript-origin-tablink"
-                   data-origin-filter="enrolledextra"
-                   role="tab"
-                   aria-selected="false">
-                    <span class="transcript-subcategory-title font-weight-bold mb-0">
-                        {{#str}} enrolled_not_in_transcript, block_academic_dashboard_esse3 {{/str}} ({{extracoursecount}})
-                    </span>
-                </a>
+        <div class="row mt-3 transcript-origin-row">
+            <div class="col-12">
+                <div class="transcript-source-tabs w-100" data-origin-tabs>
+                    <div class="nav nav-pills transcript-subcategory-nav transcript-origin-nav d-flex flex-wrap w-100" role="tablist" aria-label="{{#str}} filter_by, block_academic_dashboard_esse3 {{/str}}">
+                    <a href="#"
+                    class="nav-link transcript-subcategory-tablink transcript-origin-tablink d-flex justify-content-center active"
+                    data-origin-filter="transcript"
+                    role="tab"
+                    aria-selected="true">
+                        <span class="transcript-subcategory-title font-weight-bold mb-0">
+                            {{#str}} in_transcript, block_academic_dashboard_esse3 {{/str}} ({{transcriptcoursecount}})
+                        </span>
+                    </a>
+                    <a href="#"
+                    class="nav-link transcript-subcategory-tablink transcript-origin-tablink d-flex justify-content-center"
+                    data-origin-filter="enrolledextra"
+                    role="tab"
+                    aria-selected="false">
+                        <span class="transcript-subcategory-title font-weight-bold mb-0">
+                            {{#str}} enrolled_not_in_transcript, block_academic_dashboard_esse3 {{/str}} ({{extracoursecount}})
+                        </span>
+                    </a>
+                    </div>
+                </div>
             </div>
         </div>
         {{/hasoriginfilters}}
     </div>
-
     <!-- Transcript Items -->
     <div class="transcript-items-container transcript-grid-container">
         {{#courses}}
         <div class="transcript-item"
-             data-search="{{adDes}} {{adCod}} {{teacher}} {{cdsDes}}"
+             data-search="{{adDes}} {{adCod}} {{teacher}} {{cdsDes}} {{parentAdDes}}"
              data-year="{{courseYear}}"
              data-status="{{statusDes}}"
              data-origin="{{sourcekey}}">
@@ -140,7 +145,7 @@
                         </div>
                         {{/issourceenrolledextra}}
                         {{#issourceenrolledextra}}
-                        <div class="transcript-card-status-row">
+                        <div class="transcript-card-status-row d-flex justify-content-start">
                             <span class="badge transcript-source-badge">{{#str}} enrolled_not_in_transcript_short, block_academic_dashboard_esse3 {{/str}}</span>
                         </div>
                         {{/issourceenrolledextra}}
@@ -150,6 +155,18 @@
                     <h5 class="transcript-course-title font-weight-bold mb-2" title="{{adDes}}">
                         {{adDes}}
                     </h5>
+                    {{#hasparentcourse}}
+                    <div class="transcript-parent-course d-flex align-items-center rounded py-2 px-3 mb-3" title="{{#str}} parentcourse, block_academic_dashboard_esse3 {{/str}}: {{parentAdDes}}">
+                        <span class="transcript-parent-icon mr-2 flex-shrink-0" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                                <path d="M4 5.5c2.8 0 5.2 0.6 8 2.4c2.8-1.8 5.2-2.4 8-2.4v13c-2.8 0-5.2 0.6-8 2.4c-2.8-1.8-5.2-2.4-8-2.4v-13z"></path>
+                                <path d="M12 7.9v13"></path>
+                            </svg>
+                        </span>
+                        <span class="transcript-parent-course-label flex-shrink-0 font-weight-bold mr-1">{{#str}} parentcourse, block_academic_dashboard_esse3 {{/str}}:</span>
+                        <span class="transcript-parent-course-text">{{parentAdDes}}</span>
+                    </div>
+                    {{/hasparentcourse}}
 
                     <!-- Card Footer: Teacher + Actions (pinned to bottom) -->
                     <div class="mt-auto">
@@ -169,9 +186,9 @@
                         {{#issourceenrolledextra}}
                         {{#hasfullcategorytags}}
                         <div class="transcript-course-context mb-3">
-                            <div class="transcript-course-tags transcript-course-tags-secondary">
+                            <div class="transcript-course-tags transcript-course-tags-secondary d-flex flex-wrap">
                                 {{#fullcategorytags}}
-                                <span class="transcript-course-tag transcript-course-tag-neutral">{{name}}</span>
+                                <span class="badge border font-weight-normal rounded-pill px-2 py-1 text-muted bg-transparent small">{{name}}</span>
                                 {{/fullcategorytags}}
                             </div>
                         </div>
@@ -181,7 +198,7 @@
                         <!-- Actions & Badges -->
                         <div class="transcript-actions-row pt-3 border-top d-flex align-items-center justify-content-between flex-wrap">
                             <!-- Left Side Action Button -->
-                            <div class="transcript-action-left">
+                            <div class="transcript-action-left flex-fill w-100">
                                 {{#hasmoodlecourse}}
                                     {{#isenrolled}}
                                         <a href="{{moodlecourseurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-primary w-100">
@@ -202,7 +219,7 @@
                             </div>
 
                             <!-- Right Side Badges -->
-                            <div class="transcript-action-right d-flex align-items-center flex-wrap mt-2">
+                            <div class="transcript-action-right d-flex align-items-center flex-wrap flex-fill w-100 mt-2">
                                 {{#courseYear}}
                                 <span class="badge border font-weight-normal rounded-pill px-2 py-1 text-muted bg-transparent small">{{courseYear}}° ANNO</span>
                                 {{/courseYear}}

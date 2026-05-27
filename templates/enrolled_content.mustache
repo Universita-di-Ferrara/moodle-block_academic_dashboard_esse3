@@ -35,9 +35,9 @@
     {{/hascourses}}
 
     {{#hascourses}}
-    <div class="transcript-controls">
+    <div class="transcript-controls bg-white rounded p-3 mb-4 shadow-sm border border-white">
         <div class="row align-items-center justify-content-between">
-            <div class="col-md-12">
+            <div class="col-12">
                 <div class="input-group shadow-sm">
                     <div class="input-group-prepend">
                         <span class="input-group-text bg-white border-right-0"><i class="fa fa-search text-muted"></i></span>
@@ -65,7 +65,7 @@
         <div class="collapse" id="{{groupid}}" data-parent="#transcript-enrolled-accordion-{{blockid}}">
         {{#hassubgroups}}
             <div class="transcript-subcategory-tabs" data-subcategory-tabs>
-                <div class="nav nav-pills transcript-subcategory-nav mb-3" role="tablist" aria-label="{{groupname}}">
+                <div class="nav nav-pills transcript-subcategory-nav d-flex flex-wrap mb-3" role="tablist" aria-label="{{groupname}}">
             {{#subgroups}}
                     <a class="nav-link transcript-subcategory-tablink {{#isactive}}active{{/isactive}}"
                        id="{{subgroupbuttonid}}"
@@ -78,7 +78,7 @@
                     </a>
             {{/subgroups}}
                 </div>
-                <div class="tab-content transcript-subcategory-panels">
+                <div class="tab-content transcript-subcategory-panels bg-transparent border-0 rounded-0 p-0 shadow-none">
             {{#subgroups}}
                     <div class="tab-pane fade transcript-subcategory-pane {{#isactive}}show active{{/isactive}}"
                          id="{{subgrouppaneid}}"
@@ -92,7 +92,7 @@
                             <span class="transcript-card"></span>
                             <div class="card-body d-flex flex-column p-4">
                                 <div class="transcript-card-head mb-2">
-                                    <div class="transcript-card-status-row">
+                                    <div class="transcript-card-status-row d-flex justify-content-start">
                                         <span class="badge transcript-source-badge">{{#str}} enrolled, block_academic_dashboard_esse3 {{/str}}</span>
                                     </div>
                                 </div>
@@ -116,16 +116,16 @@
                                     {{/teacher}}
                                     {{#hasfullcategorytags}}
                                     <div class="transcript-course-context mb-3">
-                                        <div class="transcript-course-tags transcript-course-tags-secondary">
+                                        <div class="transcript-course-tags transcript-course-tags-secondary d-flex flex-wrap">
                                             {{#fullcategorytags}}
-                                            <span class="transcript-course-tag transcript-course-tag-neutral">{{name}}</span>
+                                            <span class="badge border font-weight-normal rounded-pill px-2 py-1 text-muted bg-transparent small">{{name}}</span>
                                             {{/fullcategorytags}}
                                         </div>
                                     </div>
                                     {{/hasfullcategorytags}}
 
                                     <div class="transcript-actions-row pt-3 border-top d-flex align-items-center justify-content-between flex-wrap">
-                                    <div class="transcript-action-left">
+                                    <div class="transcript-action-left flex-fill w-100">
                                             <a href="{{moodlecourseurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-primary w-100">
                                                 {{#str}} gotocourse, block_academic_dashboard_esse3 {{/str}}
                                             </a>
@@ -150,7 +150,7 @@
                         <span class="transcript-card"></span>
                         <div class="card-body d-flex flex-column p-4">
                             <div class="transcript-card-head mb-2">
-                                <div class="transcript-card-status-row">
+                                <div class="transcript-card-status-row d-flex justify-content-start">
                                     <span class="badge transcript-source-badge">{{#str}} enrolled, block_academic_dashboard_esse3 {{/str}}</span>
                                 </div>
                             </div>
@@ -174,16 +174,16 @@
                                 {{/teacher}}
                                 {{#hasfullcategorytags}}
                                 <div class="transcript-course-context mb-3">
-                                    <div class="transcript-course-tags transcript-course-tags-secondary">
+                                    <div class="transcript-course-tags transcript-course-tags-secondary d-flex flex-wrap">
                                         {{#fullcategorytags}}
-                                        <span class="transcript-course-tag transcript-course-tag-neutral">{{name}}</span>
+                                        <span class="badge border font-weight-normal rounded-pill px-2 py-1 text-muted bg-transparent small">{{name}}</span>
                                         {{/fullcategorytags}}
                                     </div>
                                 </div>
                                 {{/hasfullcategorytags}}
 
                                 <div class="transcript-actions-row pt-3 border-top d-flex align-items-center justify-content-between flex-wrap">
-                                    <div class="transcript-action-left">
+                                    <div class="transcript-action-left flex-fill w-100">
                                         <a href="{{moodlecourseurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-primary w-100">
                                             {{#str}} gotocourse, block_academic_dashboard_esse3 {{/str}}
                                         </a>
@@ -210,7 +210,7 @@
                 <span class="transcript-card"></span>
                 <div class="card-body d-flex flex-column p-4">
                     <div class="transcript-card-head mb-2">
-                        <div class="transcript-card-status-row">
+                        <div class="transcript-card-status-row d-flex justify-content-start">
                             <span class="badge transcript-source-badge">{{#str}} enrolled, block_academic_dashboard_esse3 {{/str}}</span>
                         </div>
                     </div>
@@ -234,16 +234,16 @@
                         {{/teacher}}
                         {{#hasfullcategorytags}}
                         <div class="transcript-course-context mb-3">
-                            <div class="transcript-course-tags transcript-course-tags-secondary">
+                            <div class="transcript-course-tags transcript-course-tags-secondary d-flex flex-wrap">
                                 {{#fullcategorytags}}
-                                <span class="transcript-course-tag transcript-course-tag-neutral">{{name}}</span>
+                                <span class="badge border font-weight-normal rounded-pill px-2 py-1 text-muted bg-transparent small">{{name}}</span>
                                 {{/fullcategorytags}}
                             </div>
                         </div>
                         {{/hasfullcategorytags}}
 
                         <div class="transcript-actions-row pt-3 border-top d-flex align-items-center justify-content-between flex-wrap">
-                            <div class="transcript-action-left">
+                            <div class="transcript-action-left flex-fill w-100">
                                 <a href="{{moodlecourseurl}}" class="btn btn-sm rounded-pill px-4 py-1 font-weight-bold text-uppercase shadow-sm transcript-btn-primary w-100">
                                     {{#str}} gotocourse, block_academic_dashboard_esse3 {{/str}}
                                 </a>

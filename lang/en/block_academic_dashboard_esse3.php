@@ -60,6 +60,7 @@ $string['matricolafield_desc'] = 'The user field that contains the student matri
 $string['no_results'] = 'No courses matching the filters.';
 $string['no_syllabus'] = 'No syllabus available.';
 $string['nocourses'] = 'No courses found in the transcript.';
+$string['parentcourse'] = 'Parent course';
 $string['pluginname'] = 'Academic Dashboard (Esse3)';
 $string['privacy:invalidmatid'] = 'The requested ESSE3 career is not available for the current user.';
 $string['privacy:metadata:esse3'] = 'The Academic Dashboard (Esse3) block sends personal data to the external ESSE3 student information system in order to retrieve transcript and syllabus information for the current user.';

@@ -34,6 +34,8 @@ class transcript_mapper {
      * @return array
      */
     public function prepare_template_data($items, $blockid) {
+        $items = $this->apply_parent_child_grouping($items);
+
         $courses = [];
         $uniqueyears = [];
         $uniquestatuses = [];
@@ -62,6 +64,60 @@ class transcript_mapper {
     }
 
     /**
+     * Hide aggregate parent teachings and annotate child teachings with their parent title.
+     *
+     * Esse3 exposes aggregate exams without an explicit parent field. Child rows can be identified when
+     * raggEsaTipo is ESA and ragId points to the adsceId of another row in the transcript.
+     *
+     * @param array $items Esse3 transcript items.
+     * @return array Visible transcript items.
+     */
+    private function apply_parent_child_grouping(array $items): array {
+        $itemsbyadsceid = [];
+        foreach ($items as $item) {
+            if (!empty($item->adsceId)) {
+                $itemsbyadsceid[(string)$item->adsceId] = $item;
+            }
+        }
+
+        $hiddenparentids = [];
+        foreach ($items as $item) {
+            if (!$this->is_aggregate_child($item)) {
+                continue;
+            }
+
+            $parentid = (string)$item->ragId;
+            if (!isset($itemsbyadsceid[$parentid])) {
+                continue;
+            }
+
+            $parentitem = $itemsbyadsceid[$parentid];
+            $item->parentAdDes = $parentitem->adDes ?? '';
+            $item->parentAdsceId = $parentitem->adsceId ?? '';
+            $item->hasParentCourse = !empty($item->parentAdDes);
+            $hiddenparentids[$parentid] = true;
+        }
+
+        $visibleitems = [];
+        foreach ($items as $item) {
+            $adsceid = !empty($item->adsceId) ? (string)$item->adsceId : '';
+            if ($adsceid !== '' && isset($hiddenparentids[$adsceid])) {
+                continue;
+            }
+
+            if (empty($item->hasParentCourse)) {
+                $item->parentAdDes = '';
+                $item->parentAdsceId = '';
+                $item->hasParentCourse = false;
+            }
+
+            $visibleitems[] = $item;
+        }
+
+        return $visibleitems;
+    }
+
+    /**
      * Maps a raw Esse3 item into a standardized course display object.
      *
      * @param stdClass $item
@@ -72,6 +128,9 @@ class transcript_mapper {
         $course->adDes = $item->adDes ?? '';
         $course->adCod = $item->adCod ?? '';
         $course->adsceId = $item->adsceId ?? '';
+        $course->parentAdDes = $item->parentAdDes ?? '';
+        $course->parentAdsceId = $item->parentAdsceId ?? '';
+        $course->hasparentcourse = !empty($course->parentAdDes);
         $course->careerMatId = $item->careerMatId ?? '';
         $course->courseYear = $item->annoCorso ?? '';
         $course->statusDes = $item->statoDes ?? '';
@@ -101,6 +160,32 @@ class transcript_mapper {
         $this->set_course_exam_status($course, $item);
 
         return $course;
+    }
+
+    /**
+     * Returns whether an Esse3 item is a child of an aggregate exam.
+     *
+     * @param stdClass $item
+     * @return bool
+     */
+    private function is_aggregate_child(stdClass $item): bool {
+        $aggregationtype = '';
+        if (isset($item->raggEsaTipo)) {
+            if (is_object($item->raggEsaTipo) && isset($item->raggEsaTipo->value)) {
+                $aggregationtype = (string)$item->raggEsaTipo->value;
+            } else {
+                $aggregationtype = (string)$item->raggEsaTipo;
+            }
+        }
+
+        $parentid = $item->ragId ?? '';
+        $adsceid = $item->adsceId ?? '';
+
+        if ($aggregationtype !== 'ESA' || empty($parentid) || empty($adsceid)) {
+            return false;
+        }
+
+        return (string)$parentid !== (string)$adsceid;
     }
 
     /**
