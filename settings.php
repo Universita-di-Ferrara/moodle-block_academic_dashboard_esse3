@@ -44,14 +44,12 @@ if ($ADMIN->fulltree) {
         PARAM_TEXT
     ));
 
-    // Matricola profile field.
+    // Esse3 user ID field.
     $settings->add(new admin_setting_configtext(
-        'block_academic_dashboard_esse3/matricolafield',
-        get_string('matricolafield', 'block_academic_dashboard_esse3'),
-        get_string('matricolafield_desc', 'block_academic_dashboard_esse3'),
-        get_config('block_academic_dashboard_esse3', 'matricolafield')
-            ?: get_config('block_academic_dashboard_esse3', 'fiscalcodefield')
-            ?: 'idnumber',
+        'block_academic_dashboard_esse3/userfield',
+        get_string('userfield', 'block_academic_dashboard_esse3'),
+        get_string('userfield_desc', 'block_academic_dashboard_esse3'),
+        get_config('block_academic_dashboard_esse3', 'userfield') ?: 'username',
         PARAM_ALPHANUMEXT
     ));
 

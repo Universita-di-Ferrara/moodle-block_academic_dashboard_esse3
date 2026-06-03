@@ -36,7 +36,7 @@ use external_single_structure;
 use external_multiple_structure;
 use moodle_exception;
 use block_academic_dashboard_esse3\local\esse3\esse3_handler;
-use block_academic_dashboard_esse3\local\matricola_resolver;
+use block_academic_dashboard_esse3\local\user_identifier_resolver;
 
 /**
  * Class get_syllabus
@@ -74,13 +74,13 @@ class get_syllabus extends external_api {
         $context = \context_system::instance();
         self::validate_context($context);
 
-        $matricola = matricola_resolver::resolve_for_user($USER);
-        if ($matricola === '') {
-            throw new moodle_exception('privacy:missingmatricola', 'block_academic_dashboard_esse3');
+        $esse3userid = user_identifier_resolver::resolve_for_user($USER);
+        if ($esse3userid === '') {
+            throw new moodle_exception('privacy:missinguserid', 'block_academic_dashboard_esse3');
         }
 
         $handler = new esse3_handler();
-        $careers = $handler->get_careers_by_matricola($matricola);
+        $careers = $handler->get_careers_by_userid($esse3userid);
 
         $allowedmatids = array_map(static function ($career): int {
             return isset($career->matId) ? (int)$career->matId : 0;

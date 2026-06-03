@@ -80,22 +80,21 @@ class esse3_handler {
     }
 
     /**
-     * Gets careers/libretti for a student based on matricola.
+     * Gets careers for a user based on their institutional userId.
      *
-     * The endpoint returns libretti; we normalize and keep the legacy
-     * "career logic" expected by transcript manager.
+     * Uses the userId query parameter, which is unique per person in Esse3
+     * and avoids collisions with non-unique student identifiers.
      *
-     * @param string $matricola Student matricola.
+     * @param string $userid The institutional user ID resolved from Moodle settings.
      * @return array List of careers/libretti with matId.
      */
-    public function get_careers_by_matricola($matricola) {
+    public function get_careers_by_userid($userid) {
         if (!$this->urlws) {
             return [];
         }
 
-        $url = $this->urlws . 'libretto-service-v2/libretti?matricola=' . urlencode($matricola);
+        $url = $this->urlws . 'carriere-service-v1/carriere?userId=' . urlencode($userid);
         $response = $this->request_get($url);
-
         if (!$response) {
             return [];
         }

@@ -43,21 +43,23 @@ class transcript_manager {
     /**
      * Gets all data required for the transcript template.
      *
-     * @param string $matricola Student matricola.
+     * @param string $username Moodle/institutional username (used as Esse3 userId).
      * @param int $blockid
      * @param int $userid Moodle user id.
      * @return array
      */
-    public function get_transcript_template_data($matricola, $blockid, $userid = 0) {
-        $matricola = trim((string)$matricola);
-        if ($matricola === '') {
+    public function get_transcript_template_data($username, $blockid, $userid = 0) {
+        $username = trim((string)$username);
+        if ($username === '') {
             return $this->get_enrolled_courses_template_data((int)$userid, (int)$blockid);
         }
 
-        $items = $this->get_cached_transcript($matricola);
+        $items = $this->get_cached_transcript($username);
 
         if (empty($items)) {
-            return [];
+            // No careers found in Esse3 for this userId: the user is a teacher
+            // or staff member, not an enrolled student. Fall back to enrolled-courses view.
+            return $this->get_enrolled_courses_template_data((int)$userid, (int)$blockid);
         }
 
         $mapper = new \block_academic_dashboard_esse3\transcript_mapper();
@@ -84,13 +86,13 @@ class transcript_manager {
     /**
      * Gets transcript items from cache or fetches them from Esse3 if expired.
      *
-     * @param string $matricola Student matricola.
+     * @param string $username Moodle/institutional username (Esse3 userId).
      * @return array
      */
-    private function get_cached_transcript($matricola) {
+    private function get_cached_transcript($username) {
         $cache = cache::make('block_academic_dashboard_esse3', 'transcript');
         // Cache definition uses simple keys: keep alphanumeric/underscore only.
-        $cachekey = 'matricola_' . sha1((string)$matricola);
+        $cachekey = 'userid_' . sha1((string)$username);
         $cacheddata = $cache->get($cachekey);
 
         // Manual TTL: 24 hours.
@@ -105,7 +107,7 @@ class transcript_manager {
             $cache->delete($cachekey);
         }
 
-        $items = $this->fetch_transcript_from_esse3($matricola);
+        $items = $this->fetch_transcript_from_esse3($username);
         if (!empty($items)) {
             $cache->set($cachekey, ['data' => $items, 'timestamp' => time()]);
         }
@@ -115,12 +117,12 @@ class transcript_manager {
     /**
      * Fetches transcript items from Esse3 API.
      *
-     * @param string $matricola Student matricola.
+     * @param string $username Moodle/institutional username (Esse3 userId).
      * @return array
      */
-    private function fetch_transcript_from_esse3($matricola) {
+    private function fetch_transcript_from_esse3($username) {
         $esse3handler = new \block_academic_dashboard_esse3\local\esse3\esse3_handler();
-        $careers = $esse3handler->get_careers_by_matricola($matricola);
+        $careers = $esse3handler->get_careers_by_userid($username);
 
         if (empty($careers)) {
             return [];
@@ -364,7 +366,7 @@ class transcript_manager {
 
     /**
      * Build transcript-like cards from enrolled Moodle courses.
-     * Used as fallback when student matricola is missing.
+     * Used as fallback when the ESSE3 user ID or careers are missing.
      *
      * @param int $userid
      * @param int $blockid

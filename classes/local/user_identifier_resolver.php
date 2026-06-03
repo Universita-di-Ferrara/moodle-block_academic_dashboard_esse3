@@ -17,29 +17,36 @@
 namespace block_academic_dashboard_esse3\local;
 
 /**
- * Resolves the configured matricola value for a Moodle user.
+ * Resolves the Esse3 userId value for a Moodle user.
  *
  * @package   block_academic_dashboard_esse3
  * @copyright 2026 Università degli Studi di Ferrara - Unife
  * @author    Andrea Bertelli <andrea.bertelli@unife.it>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class matricola_resolver {
+class user_identifier_resolver {
     /**
-     * Resolve the configured matricola value from standard or custom profile fields.
+     * Resolve the Esse3 userId from the configured Moodle user field.
+     *
+     * Looks up the field name stored in the 'userfield' plugin setting and reads
+     * its value from the standard user object or from custom profile fields.
+     * Falls back to the Moodle username if no specific field is configured.
      *
      * @param \stdClass $user
      * @return string
      */
     public static function resolve_for_user(\stdClass $user): string {
-        $fieldname = (string)get_config('block_academic_dashboard_esse3', 'matricolafield');
+        $fieldname = (string)get_config('block_academic_dashboard_esse3', 'userfield');
 
-        if ($fieldname !== '' && isset($user->$fieldname)) {
+        if ($fieldname === '') {
+            $fieldname = 'username';
+        }
+
+        if (isset($user->$fieldname)) {
             return trim((string)$user->$fieldname);
         }
 
         if (
-            $fieldname !== '' &&
             !empty($user->profile) &&
             is_array($user->profile) &&
             array_key_exists($fieldname, $user->profile)
@@ -47,6 +54,6 @@ class matricola_resolver {
             return trim((string)$user->profile[$fieldname]);
         }
 
-        return '';
+        return trim((string)($user->username ?? ''));
     }
 }

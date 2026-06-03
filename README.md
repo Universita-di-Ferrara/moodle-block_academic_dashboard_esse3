@@ -11,7 +11,7 @@ In many university Moodle installations, students and teachers work in a large n
 This block addresses that problem in two complementary ways:
 
 - For students, it surfaces the academic record and study-plan context coming from ESSE3 and links it to Moodle courses.
-- For teachers, or for users without a configured matricola, it provides a cleaner view of the Moodle courses they are enrolled in, grouped according to the plugin settings.
+- For teachers, or for users without a configured ESSE3 user ID, it provides a cleaner view of the Moodle courses they are enrolled in, grouped according to the plugin settings.
 
 The result is an academic dashboard that helps users reach the right learning spaces faster and with less confusion.
 
@@ -31,9 +31,9 @@ This plugin does not replace ESSE3. It uses ESSE3 as an academic data source and
 
 ### Student transcript mode
 
-If the logged-in user has a configured matricola value, the block:
+If the logged-in user has a configured ESSE3 user ID value, the block:
 
-1. reads the matricola from a standard Moodle user field or a custom profile field;
+1. reads the ESSE3 user ID from a standard Moodle user field or a custom profile field;
 2. calls the ESSE3 REST API;
 3. retrieves careers and transcript items;
 4. enriches those items with teacher and partition data when available;
@@ -44,13 +44,13 @@ When transcript data is available, the block can also merge additional Moodle co
 
 ### Enrolled-course fallback mode
 
-If the user does not have a matricola configured, the block falls back to Moodle enrolments and builds the dashboard from the courses the user is enrolled in.
+If the user does not have an ESSE3 user ID configured, the block falls back to Moodle enrolments and builds the dashboard from the courses the user is enrolled in.
 
 This is especially useful for teachers, because it lets them see their teaching spaces in a curated block instead of navigating the full Moodle structure.
 
 ### Empty transcript case
 
-If a matricola is present but ESSE3 does not return transcript data, the block does not switch to the enrolled-course fallback automatically. In that case, the block remains empty.
+If an ESSE3 user ID is present but ESSE3 does not return transcript data, the block falls back to the enrolled-course view.
 
 ## Main features
 
@@ -60,9 +60,9 @@ If a matricola is present but ESSE3 does not return transcript data, the block d
 - Search and filtering in transcript mode.
 - Grid and list layouts for transcript cards.
 - Syllabus modal loaded through a Moodle external function and AMD module.
-- Enrolled-course fallback for users without a matricola.
+- Enrolled-course fallback for users without an ESSE3 user ID or without ESSE3 careers.
 - Configurable grouping and sorting for enrolled Moodle courses.
-- Support for custom Moodle user profile fields as matricola source.
+- Support for custom Moodle user profile fields as ESSE3 user ID source.
 - Accent color setting for visual customization.
 
 ## Course matching
@@ -90,13 +90,13 @@ When a matching course is found, the block can expose:
 ## Data flow summary
 
 - User logs in to Moodle.
-- The block resolves the configured matricola field.
-- If a matricola is available, the block requests transcript data from ESSE3.
+- The block resolves the configured Moodle user field used as ESSE3 `userId`.
+- If an ESSE3 user ID is available, the block requests career data from ESSE3.
 - Transcript items are cached through Moodle MUC.
 - Each transcript item is mapped to a Moodle card model.
 - Moodle courses are matched through `idnumber`.
 - Extra Moodle enrolments can be merged into the transcript view.
-- If no matricola is available, the block builds the view from Moodle enrolments only.
+- If no ESSE3 user ID or ESSE3 career is available, the block builds the view from Moodle enrolments only.
 
 ## Configuration
 
@@ -110,7 +110,7 @@ Available settings include:
 | --- | --- |
 | `apiurl` | Base URL of the ESSE3 REST API |
 | `apitoken` | Basic authentication token used for API calls |
-| `matricolafield` | Moodle user field used as matricola source, including supported custom profile fields |
+| `userfield` | Moodle user field sent to ESSE3 as `userId`, including supported custom profile fields |
 | `rootcategories` | Optional list of root category IDs allowed in fallback mode |
 | `groupdepth` | First grouping level for enrolled-course fallback |
 | `secondarygroupdepth` | Optional second grouping level for enrolled-course fallback |
@@ -125,7 +125,7 @@ Available settings include:
 - A Moodle version compatible with the `requires` value declared in `version.php`
 - Network access from Moodle to the ESSE3 REST API
 - A valid ESSE3 API URL and token
-- A Moodle user field containing the student's matricola
+- A Moodle user field containing the ESSE3 user ID, usually `username`
 - Moodle courses with `idnumber` values aligned with the institution's ESSE3 mapping strategy
 
 ## Installation
@@ -151,7 +151,7 @@ It is not intended for standard course pages, activity pages, or admin pages.
 - Transcript data is cached through Moodle MUC
 - Mustache templates are used for transcript and enrolled-course rendering
 - AMD modules are used for transcript filters, enrolled-course search, and syllabus loading
-- The plugin supports both standard Moodle user fields and custom profile fields for the matricola lookup
+- The plugin supports both standard Moodle user fields and custom profile fields for the ESSE3 user ID lookup
 
 ## Why this plugin matters
 
