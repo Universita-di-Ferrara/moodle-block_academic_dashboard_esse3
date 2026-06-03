@@ -30,6 +30,13 @@ use context_course;
  */
 class transcript_manager {
     /**
+     * In-memory teacher cache for the current request.
+     *
+     * @var array
+     */
+    private $courseteachercache = [];
+
+    /**
      * Create the helper used to merge transcript and enrolled-course collections.
      *
      * @return transcript_course_collection_helper
@@ -54,9 +61,13 @@ class transcript_manager {
             return $this->get_enrolled_courses_template_data((int)$userid, (int)$blockid);
         }
 
+        if ($this->get_cached_user_status($username) === 'nonstudent') {
+            return $this->get_enrolled_courses_template_data((int)$userid, (int)$blockid);
+        }
+
         $items = $this->get_cached_transcript($username);
 
-        if (empty($items)) {
+        if ($items === null || empty($items)) {
             // No careers found in Esse3 for this userId: the user is a teacher
             // or staff member, not an enrolled student. Fall back to enrolled-courses view.
             return $this->get_enrolled_courses_template_data((int)$userid, (int)$blockid);
@@ -87,12 +98,12 @@ class transcript_manager {
      * Gets transcript items from cache or fetches them from Esse3 if expired.
      *
      * @param string $username Moodle/institutional username (Esse3 userId).
-     * @return array
+     * @return array|null Transcript items, or null when the Esse3 request failed.
      */
     private function get_cached_transcript($username) {
         $cache = cache::make('block_academic_dashboard_esse3', 'transcript');
         // Cache definition uses simple keys: keep alphanumeric/underscore only.
-        $cachekey = 'userid_' . sha1((string)$username);
+        $cachekey = $this->get_user_cache_key($username);
         $cacheddata = $cache->get($cachekey);
 
         // Manual TTL: 24 hours.
@@ -101,6 +112,7 @@ class transcript_manager {
         if ($cacheddata !== false) {
             if (isset($cacheddata['timestamp'], $cacheddata['data'])) {
                 if (time() - $cacheddata['timestamp'] <= $ttl) {
+                    $this->set_cached_user_status($username, 'student');
                     return $cacheddata['data'];
                 }
             }
@@ -108,6 +120,10 @@ class transcript_manager {
         }
 
         $items = $this->fetch_transcript_from_esse3($username);
+        if ($items === null) {
+            return null;
+        }
+
         if (!empty($items)) {
             $cache->set($cachekey, ['data' => $items, 'timestamp' => time()]);
         }
@@ -118,15 +134,22 @@ class transcript_manager {
      * Fetches transcript items from Esse3 API.
      *
      * @param string $username Moodle/institutional username (Esse3 userId).
-     * @return array
+     * @return array|null Transcript items, or null when the Esse3 careers request failed.
      */
     private function fetch_transcript_from_esse3($username) {
         $esse3handler = new \block_academic_dashboard_esse3\local\esse3\esse3_handler();
         $careers = $esse3handler->get_careers_by_userid($username);
 
+        if ($careers === false) {
+            return null;
+        }
+
         if (empty($careers)) {
+            $this->set_cached_user_status($username, 'nonstudent');
             return [];
         }
+
+        $this->set_cached_user_status($username, 'student');
 
         $allitems = [];
         foreach ($careers as $career) {
@@ -134,6 +157,53 @@ class transcript_manager {
         }
 
         return $allitems;
+    }
+
+    /**
+     * Gets the cached ESSE3 user status.
+     *
+     * @param string $username Moodle/institutional username (Esse3 userId).
+     * @return string Empty string when missing or expired.
+     */
+    private function get_cached_user_status(string $username): string {
+        $cache = cache::make('block_academic_dashboard_esse3', 'user_status');
+        $cachekey = $this->get_user_cache_key($username);
+        $cacheddata = $cache->get($cachekey);
+        $ttl = 12 * 3600;
+
+        if ($cacheddata !== false && isset($cacheddata['timestamp'], $cacheddata['status'])) {
+            if (time() - $cacheddata['timestamp'] <= $ttl) {
+                return (string)$cacheddata['status'];
+            }
+            $cache->delete($cachekey);
+        }
+
+        return '';
+    }
+
+    /**
+     * Stores the ESSE3 user status.
+     *
+     * @param string $username Moodle/institutional username (Esse3 userId).
+     * @param string $status Cached status.
+     * @return void
+     */
+    private function set_cached_user_status(string $username, string $status): void {
+        $cache = cache::make('block_academic_dashboard_esse3', 'user_status');
+        $cache->set($this->get_user_cache_key($username), [
+            'status' => $status,
+            'timestamp' => time(),
+        ]);
+    }
+
+    /**
+     * Builds a simple MUC key for username-based caches.
+     *
+     * @param string $username Moodle/institutional username (Esse3 userId).
+     * @return string
+     */
+    private function get_user_cache_key(string $username): string {
+        return 'userid_' . sha1($username);
     }
 
     /**
@@ -224,12 +294,23 @@ class transcript_manager {
      * @param \moodle_database $db
      */
     private function check_moodle_courses(&$courses, $db) {
+        global $USER;
+
+        $moodlecoursematches = $this->get_moodle_course_matches($courses, $db);
+
         foreach ($courses as &$course) {
-            $this->get_moodle_course_info($course, $db);
+            $pattern = $this->get_course_idnumber_pattern($course);
+            if ($pattern === '' || empty($moodlecoursematches[$pattern])) {
+                $course->hasmoodlecourse = false;
+            } else {
+                $this->apply_moodle_course_info($course, $moodlecoursematches[$pattern], (int)$USER->id);
+            }
+
             if (!empty($course->teacher)) {
                 $course->teacher = \core_text::strtotitle($course->teacher);
             }
         }
+        unset($course);
     }
 
     /**
@@ -283,55 +364,100 @@ class transcript_manager {
     }
 
     /**
-     * Checks if a transcript item has a matching Moodle course.
+     * Build the Moodle course idnumber prefix used to match an Esse3 transcript item.
      *
      * @param stdClass $course
-     * @param \moodle_database $db
+     * @return string
      */
-    private function get_moodle_course_info(&$course, $db) {
-        global $USER;
-
+    private function get_course_idnumber_pattern($course): string {
         if (empty($course->cdsId) || empty($course->adId) || empty($course->aaFreqId)) {
-            $course->hasmoodlecourse = false;
-            return;
+            return '';
         }
 
-        $pattern = $course->cdsId . '-' . $course->adId . '-' . $course->aaFreqId;
-        $found = $db->get_records_select(
+        return $course->cdsId . '-' . $course->adId . '-' . $course->aaFreqId;
+    }
+
+    /**
+     * Fetch Moodle course matches for all transcript cards in a single query.
+     *
+     * @param array $courses
+     * @param \moodle_database $db
+     * @return array Matching Moodle courses indexed by idnumber prefix.
+     */
+    private function get_moodle_course_matches(array $courses, $db): array {
+        $patterns = [];
+        foreach ($courses as $course) {
+            $pattern = $this->get_course_idnumber_pattern($course);
+            if ($pattern !== '') {
+                $patterns[$pattern] = $pattern;
+            }
+        }
+
+        if (empty($patterns)) {
+            return [];
+        }
+
+        $conditions = [];
+        $params = [];
+        foreach ($patterns as $pattern) {
+            $conditions[] = $db->sql_like('idnumber', '?');
+            $params[] = $pattern . '%';
+        }
+
+        $records = $db->get_records_select(
             'course',
-            $db->sql_like('idnumber', '?'),
-            [$pattern . '%'],
-            '',
-            'id, fullname, shortname, idnumber',
-            0,
-            1
+            '(' . implode(' OR ', $conditions) . ')',
+            $params,
+            'id ASC',
+            'id, fullname, shortname, idnumber'
         );
 
-        if (!empty($found)) {
-            $moodlecourse = reset($found);
-            $course->moodlecourseid = $moodlecourse->id;
-            $course->moodlecoursename = $moodlecourse->fullname;
-            $courseurl = new moodle_url('/course/view.php', ['id' => $moodlecourse->id]);
-            $course->moodlecourseurl = $courseurl->out(false);
-
-            $context = context_course::instance($moodlecourse->id, IGNORE_MISSING);
-            if ($context) {
-                $course->isenrolled = is_enrolled($context, $USER);
-                if (empty($course->teacher)) {
-                    $course->teacher = $this->get_course_teachers($moodlecourse->id);
+        $matches = [];
+        foreach ($records as $record) {
+            foreach ($patterns as $pattern) {
+                if (isset($matches[$pattern])) {
+                    continue;
                 }
-            } else {
-                $course->isenrolled = false;
-            }
 
-            if (!$course->isenrolled) {
-                $enrolurl = new moodle_url('/enrol/index.php', ['id' => $moodlecourse->id]);
-                $course->enrolurl = $enrolurl->out(false);
+                if (strpos((string)$record->idnumber, $pattern) === 0) {
+                    $matches[$pattern] = $record;
+                    break;
+                }
             }
-            $course->hasmoodlecourse = true;
-        } else {
-            $course->hasmoodlecourse = false;
         }
+
+        return $matches;
+    }
+
+    /**
+     * Attach Moodle course metadata to a transcript card.
+     *
+     * @param stdClass $course
+     * @param stdClass $moodlecourse
+     * @param int $userid
+     * @return void
+     */
+    private function apply_moodle_course_info(&$course, $moodlecourse, int $userid): void {
+        $course->moodlecourseid = $moodlecourse->id;
+        $course->moodlecoursename = $moodlecourse->fullname;
+        $courseurl = new moodle_url('/course/view.php', ['id' => $moodlecourse->id]);
+        $course->moodlecourseurl = $courseurl->out(false);
+
+        $context = context_course::instance($moodlecourse->id, IGNORE_MISSING);
+        if ($context) {
+            $course->isenrolled = is_enrolled($context, $userid);
+            if (empty($course->teacher)) {
+                $course->teacher = $this->get_course_teachers($moodlecourse->id);
+            }
+        } else {
+            $course->isenrolled = false;
+        }
+
+        if (!$course->isenrolled) {
+            $enrolurl = new moodle_url('/enrol/index.php', ['id' => $moodlecourse->id]);
+            $course->enrolurl = $enrolurl->out(false);
+        }
+        $course->hasmoodlecourse = true;
     }
 
     /**
@@ -343,6 +469,24 @@ class transcript_manager {
     private function get_course_teachers($courseid) {
         global $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
+
+        $courseid = (int)$courseid;
+        if (array_key_exists($courseid, $this->courseteachercache)) {
+            return $this->courseteachercache[$courseid];
+        }
+
+        $cache = cache::make('block_academic_dashboard_esse3', 'course_teachers');
+        $cachekey = 'course_' . $courseid;
+        $cacheddata = $cache->get($cachekey);
+        $ttl = 12 * 3600;
+
+        if ($cacheddata !== false && isset($cacheddata['timestamp'], $cacheddata['data'])) {
+            if (time() - $cacheddata['timestamp'] <= $ttl) {
+                $this->courseteachercache[$courseid] = (string)$cacheddata['data'];
+                return $this->courseteachercache[$courseid];
+            }
+            $cache->delete($cachekey);
+        }
 
         $teachers = [];
         $courserecord = get_course($courseid);
@@ -357,11 +501,17 @@ class transcript_manager {
         }
 
         if (empty($teachers)) {
+            $this->courseteachercache[$courseid] = '';
+            $cache->set($cachekey, ['data' => '', 'timestamp' => time()]);
             return '';
         }
 
         $teachers = array_values(array_unique($teachers));
-        return implode(', ', $teachers);
+        $teacherlist = implode(', ', $teachers);
+        $this->courseteachercache[$courseid] = $teacherlist;
+        $cache->set($cachekey, ['data' => $teacherlist, 'timestamp' => time()]);
+
+        return $teacherlist;
     }
 
     /**

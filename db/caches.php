@@ -30,4 +30,14 @@ $definitions = [
         'simplekeys' => true,
         'simpledata' => true,
     ],
+    'course_teachers' => [
+        'mode' => core_cache\store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ],
+    'user_status' => [
+        'mode' => core_cache\store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ],
 ];

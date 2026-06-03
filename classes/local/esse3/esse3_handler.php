@@ -86,22 +86,22 @@ class esse3_handler {
      * and avoids collisions with non-unique student identifiers.
      *
      * @param string $userid The institutional user ID resolved from Moodle settings.
-     * @return array List of careers/libretti with matId.
+     * @return array|false List of careers/libretti with matId, or false on request failure.
      */
     public function get_careers_by_userid($userid) {
         if (!$this->urlws) {
-            return [];
+            return false;
         }
 
         $url = $this->urlws . 'carriere-service-v1/carriere?userId=' . urlencode($userid);
         $response = $this->request_get($url);
         if (!$response) {
-            return [];
+            return false;
         }
 
         $decoded = json_decode($response);
         if (!is_array($decoded)) {
-            return [];
+            return false;
         }
 
         // Keep only active entries if staStuCod is present.

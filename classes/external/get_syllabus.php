@@ -81,6 +81,13 @@ class get_syllabus extends external_api {
 
         $handler = new esse3_handler();
         $careers = $handler->get_careers_by_userid($esse3userid);
+        if ($careers === false) {
+            return [
+                'status' => 'error',
+                'message' => 'Failed to validate careers from Esse3',
+                'data' => [],
+            ];
+        }
 
         $allowedmatids = array_map(static function ($career): int {
             return isset($career->matId) ? (int)$career->matId : 0;
