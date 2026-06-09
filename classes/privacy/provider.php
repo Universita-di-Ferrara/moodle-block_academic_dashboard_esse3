@@ -42,7 +42,7 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
      */
     public static function get_metadata(collection $collection): collection {
         $collection->link_external_location('Esse3', [
-            'userid' => 'privacy:metadata:esse3:userid',
+            'matricola' => 'privacy:metadata:esse3:matricola',
             'careerid' => 'privacy:metadata:esse3:careerid',
             'courseid' => 'privacy:metadata:esse3:courseid',
             'transcriptdata' => 'privacy:metadata:esse3:transcriptdata',

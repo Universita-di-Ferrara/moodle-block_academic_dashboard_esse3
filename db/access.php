@@ -25,6 +25,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
+    'block/academic_dashboard_esse3:view' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+
     'block/academic_dashboard_esse3:myaddinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

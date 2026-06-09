@@ -97,10 +97,13 @@ class block_academic_dashboard_esse3 extends block_base {
         $this->content->footer = '';
         $this->content->text = '';
 
-        $esse3userid = \block_academic_dashboard_esse3\local\user_identifier_resolver::resolve_for_user($USER);
+        $matricola = '';
+        if (\block_academic_dashboard_esse3\local\user_identifier_resolver::is_student($USER)) {
+            $matricola = \block_academic_dashboard_esse3\local\user_identifier_resolver::resolve_matricola_for_user($USER);
+        }
 
         $manager = new \block_academic_dashboard_esse3\transcript_manager();
-        $data = $manager->get_transcript_template_data($esse3userid, $this->instance->id, (int)$USER->id);
+        $data = $manager->get_transcript_template_data($matricola, $this->instance->id, (int)$USER->id);
 
         if (empty($data)) {
             // Keep block truly empty so Moodle can hide it when no transcript courses are available.

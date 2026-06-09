@@ -73,14 +73,15 @@ class get_syllabus extends external_api {
 
         $context = \context_system::instance();
         self::validate_context($context);
+        require_capability('block/academic_dashboard_esse3:view', $context);
 
-        $esse3userid = user_identifier_resolver::resolve_for_user($USER);
-        if ($esse3userid === '') {
-            throw new moodle_exception('privacy:missinguserid', 'block_academic_dashboard_esse3');
+        $matricola = user_identifier_resolver::resolve_matricola_for_user($USER);
+        if ($matricola === '') {
+            throw new moodle_exception('privacy:missingmatricola', 'block_academic_dashboard_esse3');
         }
 
         $handler = new esse3_handler();
-        $careers = $handler->get_careers_by_userid($esse3userid);
+        $careers = $handler->get_careers_by_matricola($matricola);
         if ($careers === false) {
             return [
                 'status' => 'error',

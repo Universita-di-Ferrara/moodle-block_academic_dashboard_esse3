@@ -80,20 +80,17 @@ class esse3_handler {
     }
 
     /**
-     * Gets careers for a user based on their institutional userId.
+     * Gets careers for a user based on their matricola.
      *
-     * Uses the userId query parameter, which is unique per person in Esse3
-     * and avoids collisions with non-unique student identifiers.
-     *
-     * @param string $userid The institutional user ID resolved from Moodle settings.
+     * @param string $matricola The student matricola resolved from Moodle settings.
      * @return array|false List of careers/libretti with matId, or false on request failure.
      */
-    public function get_careers_by_userid($userid) {
+    public function get_careers_by_matricola($matricola) {
         if (!$this->urlws) {
             return false;
         }
 
-        $url = $this->urlws . 'carriere-service-v1/carriere?userId=' . urlencode($userid);
+        $url = $this->urlws . 'libretto-service-v2/libretti?matricola=' . urlencode($matricola);
         $response = $this->request_get($url);
         if (!$response) {
             return false;
@@ -104,9 +101,19 @@ class esse3_handler {
             return false;
         }
 
+        return $this->filter_active_careers($decoded);
+    }
+
+    /**
+     * Keeps only active careers when the ESSE3 status field is available.
+     *
+     * @param array $careers
+     * @return array
+     */
+    private function filter_active_careers(array $careers): array {
         // Keep only active entries if staStuCod is present.
         $active = [];
-        foreach ($decoded as $entry) {
+        foreach ($careers as $entry) {
             if (!isset($entry->staStuCod) || $entry->staStuCod !== 'X') {
                 $active[] = $entry;
             }

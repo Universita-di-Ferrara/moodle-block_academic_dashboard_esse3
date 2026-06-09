@@ -90,8 +90,10 @@ When a matching course is found, the block can expose:
 ## Data flow summary
 
 - User logs in to Moodle.
-- The block resolves the configured Moodle user field used as ESSE3 `userId`.
-- If an ESSE3 user ID is available, the block requests career data from ESSE3.
+- The block checks the configured student email domain.
+- Non-student users are shown the enrolled-course fallback without calling ESSE3.
+- Student users are resolved through the configured Moodle matricola field.
+- If a matricola is available, the block requests career data from ESSE3.
 - Transcript items are cached through Moodle MUC.
 - Each transcript item is mapped to a Moodle card model.
 - Moodle courses are matched through `idnumber`.
@@ -110,7 +112,8 @@ Available settings include:
 | --- | --- |
 | `apiurl` | Base URL of the ESSE3 REST API |
 | `apitoken` | Basic authentication token used for API calls |
-| `userfield` | Moodle user field sent to ESSE3 as `userId`, including supported custom profile fields |
+| `studentdomain` | Email domain used to identify student users before calling ESSE3 |
+| `matricolafield` | Moodle user field sent to ESSE3 as student matricola |
 | `rootcategories` | Optional list of root category IDs allowed in fallback mode |
 | `groupdepth` | First grouping level for enrolled-course fallback |
 | `secondarygroupdepth` | Optional second grouping level for enrolled-course fallback |
@@ -151,7 +154,7 @@ It is not intended for standard course pages, activity pages, or admin pages.
 - Transcript data is cached through Moodle MUC
 - Mustache templates are used for transcript and enrolled-course rendering
 - AMD modules are used for transcript filters, enrolled-course search, and syllabus loading
-- The plugin supports both standard Moodle user fields and custom profile fields for the ESSE3 user ID lookup
+- The plugin supports both standard Moodle user fields and custom profile fields for the ESSE3 matricola lookup
 
 ## Why this plugin matters
 

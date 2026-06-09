@@ -31,6 +31,6 @@ $functions = [
         'description' => 'Get course syllabus from Esse3',
         'type'        => 'read',
         'ajax'        => true,
-        'capabilities' => '',
+        'capabilities' => 'block/academic_dashboard_esse3:view',
     ],
 ];

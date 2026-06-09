@@ -36,7 +36,7 @@ if ($ADMIN->fulltree) {
     ));
 
     // API Token.
-    $settings->add(new admin_setting_configtext(
+    $settings->add(new admin_setting_configpasswordunmask(
         'block_academic_dashboard_esse3/apitoken',
         get_string('apitoken', 'block_academic_dashboard_esse3'),
         get_string('apitoken_desc', 'block_academic_dashboard_esse3'),
@@ -44,12 +44,21 @@ if ($ADMIN->fulltree) {
         PARAM_TEXT
     ));
 
-    // Esse3 user ID field.
+    // Student email domain.
     $settings->add(new admin_setting_configtext(
-        'block_academic_dashboard_esse3/userfield',
-        get_string('userfield', 'block_academic_dashboard_esse3'),
-        get_string('userfield_desc', 'block_academic_dashboard_esse3'),
-        get_config('block_academic_dashboard_esse3', 'userfield') ?: 'username',
+        'block_academic_dashboard_esse3/studentdomain',
+        get_string('studentdomain', 'block_academic_dashboard_esse3'),
+        get_string('studentdomain_desc', 'block_academic_dashboard_esse3'),
+        '',
+        PARAM_TEXT
+    ));
+
+    // Esse3 matricola field.
+    $settings->add(new admin_setting_configtext(
+        'block_academic_dashboard_esse3/matricolafield',
+        get_string('matricolafield', 'block_academic_dashboard_esse3'),
+        get_string('matricolafield_desc', 'block_academic_dashboard_esse3'),
+        get_config('block_academic_dashboard_esse3', 'matricolafield') ?: 'idnumber',
         PARAM_ALPHANUMEXT
     ));
 
